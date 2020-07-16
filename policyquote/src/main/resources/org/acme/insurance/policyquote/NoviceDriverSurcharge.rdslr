@@ -1,0 +1,21 @@
+package org.acme.insurance.policyquote;
+
+import java.lang.Number;
+import org.acme.insurance.Driver;
+import org.acme.insurance.Policy;
+
+rule "NoviceDriverSurcharge"
+	dialect "mvel"
+	no-loop true
+	lock-on-active true
+	ruleflow-group "surcharge"
+	when
+		There is a Driver
+		- age less than 20 years old
+		There is a Policy
+		- policy type is 'AUTO'
+		- price is greater than 0
+	then
+		Add surcharge 250 to Policy
+		logRule
+end

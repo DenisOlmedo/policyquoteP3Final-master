@@ -1,0 +1,20 @@
+package org.acme.insurance.policyquote;
+
+import org.acme.insurance.Driver;
+import org.acme.insurance.Policy;
+
+rule "PriceMultipleVehicles"
+    ruleflow-group "total"
+    salience -10
+
+    when
+        adriver: Driver()
+        pMaster: Policy(driver==adriver,policyType=="MASTER",price==null)
+        acc( 
+            Policy(driver==adriver,policyType=="AUTO", priceVal:price);
+            totalPrice: sum(priceVal);
+            totalPrice > 0)
+    then
+        System.out.println("PriceMultipleVehicles:  setting pMaster price to: "+  totalPrice.intValue());
+        modify(pMaster) {setPrice(totalPrice.intValue())}
+end
